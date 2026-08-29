@@ -35,7 +35,7 @@ export function FormQuestion({
 
   return (
     <fieldset className="space-y-3">
-      <legend className="text-base font-medium text-gray-900">
+      <legend className="text-base font-medium leading-snug text-gray-900 sm:text-[1.05rem]">
         {question.label}
       </legend>
 
@@ -44,7 +44,7 @@ export function FormQuestion({
           {question.options.map((option) => (
             <label
               key={option}
-              className="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 transition-colors hover:border-kelenpe/40 has-checked:border-kelenpe has-checked:bg-kelenpe/5"
+              className="flex min-h-11 cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 transition-colors hover:border-kelenpe/40 has-checked:border-kelenpe has-checked:bg-kelenpe/5"
             >
               <input
                 type="radio"
@@ -134,7 +134,7 @@ function FeaturePriorityInput({
         return (
           <label
             key={option}
-            className={`flex items-start gap-3 rounded-lg border px-3 py-3 transition-colors ${
+            className={`flex min-h-11 items-start gap-3 rounded-lg border px-3 py-3 transition-colors ${
               disabled
                 ? "cursor-not-allowed border-gray-100 bg-gray-50 opacity-60"
                 : "cursor-pointer border-gray-200 bg-white hover:border-kelenpe/40 has-checked:border-kelenpe has-checked:bg-kelenpe/5"

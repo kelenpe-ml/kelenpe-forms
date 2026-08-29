@@ -1,8 +1,11 @@
-import { maliHubSugu } from "@/clients/mali-hub-sugu";
+import {
+  maliHubSugu,
+  MALI_HUB_SUGU_SLUG,
+} from "@/clients/mali-hub-sugu-x7k2m9qp1a";
 import type { ClientForm } from "@/lib/types";
 
 const clients: Record<string, ClientForm> = {
-  "mali-hub-sugu": maliHubSugu,
+  [MALI_HUB_SUGU_SLUG]: maliHubSugu,
 };
 
 export function getClientForm(slug: string): ClientForm | undefined {

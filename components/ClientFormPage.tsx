@@ -92,7 +92,7 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-10 pb-24">
           {form.sections.map((section) => (
             <section key={section.title} className="space-y-6">
               <h2 className="text-lg font-semibold text-kelenpe">
@@ -127,7 +127,7 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
             </div>
           )}
 
-          <div className="sticky bottom-4 z-10 pt-2">
+          <div className="sticky bottom-0 z-10 -mx-4 border-t border-gray-100 bg-white/95 px-4 py-4 backdrop-blur-sm sm:-mx-6 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <button
               type="submit"
               disabled={submitState === "loading"}

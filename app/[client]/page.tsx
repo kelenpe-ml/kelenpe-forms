@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ClientFormPage } from "@/components/ClientFormPage";
 import { getAllClientSlugs, getClientForm } from "@/lib/clients";
@@ -10,12 +11,12 @@ export function generateStaticParams() {
   return getAllClientSlugs().map((client) => ({ client }));
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { client: slug } = await params;
   const form = getClientForm(slug);
 
   if (!form) {
-    return { title: "Formulaire introuvable" };
+    return { title: "Page introuvable" };
   }
 
   return {

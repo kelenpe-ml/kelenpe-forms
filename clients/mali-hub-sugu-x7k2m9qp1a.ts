@@ -1,7 +1,9 @@
 import type { ClientForm } from "@/lib/types";
 
+export const MALI_HUB_SUGU_SLUG = "mali-hub-sugu-x7k2m9qp1a";
+
 export const maliHubSugu: ClientForm = {
-  slug: "mali-hub-sugu",
+  slug: MALI_HUB_SUGU_SLUG,
   clientName: "Mali Hub Sugu",
   projectName: "Site web & application",
   intro:
