@@ -1,26 +1,111 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import {
   buildInitialAnswers,
   FormQuestion,
 } from "@/components/FormQuestion";
 import { KelenpeLogo } from "@/components/KelenpeLogo";
 import { mergeAnswersWithDetails } from "@/lib/formatAnswer";
+import type { UploadedFile } from "@/lib/submission";
 import type { ClientForm, FormAnswers } from "@/lib/types";
 
 type ClientFormPageProps = {
   form: ClientForm;
 };
 
+type ClientFormBodyProps = ClientFormPageProps & {
+  initialDraft: Draft | null;
+  persistDraft: boolean;
+};
+
 type SubmitState = "idle" | "loading" | "success" | "error";
 
+type Draft = { answers: FormAnswers; details: Record<string, string> };
+
+const DRAFT_KEY_PREFIX = "kelenpe-draft:";
+const DRAFT_SAVE_DELAY_MS = 400;
+
+function readDraft(slug: string): Draft | null {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY_PREFIX + slug);
+    return raw ? (JSON.parse(raw) as Draft) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeDraft(slug: string, draft: Draft | null) {
+  try {
+    if (draft) {
+      window.localStorage.setItem(DRAFT_KEY_PREFIX + slug, JSON.stringify(draft));
+    } else {
+      window.localStorage.removeItem(DRAFT_KEY_PREFIX + slug);
+    }
+  } catch {
+    // Stockage indisponible (navigation privée, quota) : le formulaire reste utilisable sans brouillon.
+  }
+}
+
+const subscribeNever = () => () => {};
+
+/** Le brouillon vit dans le navigateur : on ne le lit qu'après l'hydratation. */
 export function ClientFormPage({ form }: ClientFormPageProps) {
-  const initialAnswers = useMemo(() => buildInitialAnswers(form), [form]);
-  const [answers, setAnswers] = useState<FormAnswers>(initialAnswers);
-  const [details, setDetails] = useState<Record<string, string>>({});
+  const isBrowser = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+
+  return (
+    <ClientFormBody
+      key={isBrowser ? "browser" : "server"}
+      form={form}
+      initialDraft={isBrowser ? readDraft(form.slug) : null}
+      persistDraft={isBrowser}
+    />
+  );
+}
+
+function ClientFormBody({
+  form,
+  initialDraft,
+  persistDraft,
+}: ClientFormBodyProps) {
+  const [answers, setAnswers] = useState<FormAnswers>(() => ({
+    ...buildInitialAnswers(form),
+    ...initialDraft?.answers,
+  }));
+  const [details, setDetails] = useState<Record<string, string>>(
+    initialDraft?.details ?? {},
+  );
+  const [files, setFiles] = useState<Record<string, UploadedFile>>({});
+  const draftRestored = initialDraft !== null;
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const questions = useMemo(
+    () => form.sections.flatMap((section) => section.questions),
+    [form],
+  );
+
+  useEffect(() => {
+    if (!persistDraft || submitState === "success") return;
+    const timer = window.setTimeout(
+      () => writeDraft(form.slug, { answers, details }),
+      DRAFT_SAVE_DELAY_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [answers, details, persistDraft, form.slug, submitState]);
+
+  const handleFileChange = (id: string, file: UploadedFile | undefined) => {
+    setFiles((prev) => {
+      const next = { ...prev };
+      if (file) next[id] = file;
+      else delete next[id];
+      return next;
+    });
+  };
 
   const handleChange = (id: string, value: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [id]: value }));
@@ -35,7 +120,7 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
     setSubmitState("loading");
     setErrorMessage(null);
 
-    const mergedAnswers = mergeAnswersWithDetails(answers, details);
+    const mergedAnswers = mergeAnswersWithDetails(answers, details, questions);
 
     try {
       const response = await fetch("/api/submit", {
@@ -44,6 +129,7 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
         body: JSON.stringify({
           slug: form.slug,
           answers: mergedAnswers,
+          files,
         }),
       });
 
@@ -56,16 +142,17 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
         setSubmitState("error");
         setErrorMessage(
           data.error ??
-            "L'envoi a échoué. Vérifiez votre connexion et réessayez.",
+            "L'envoi a échoué. Vos réponses sont conservées sur cet appareil : réessayez.",
         );
         return;
       }
 
+      writeDraft(form.slug, null);
       setSubmitState("success");
     } catch {
       setSubmitState("error");
       setErrorMessage(
-        "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.",
+        "Impossible de contacter le serveur. Vos réponses sont conservées sur cet appareil : réessayez dès que la connexion revient.",
       );
     }
   };
@@ -111,12 +198,21 @@ export function ClientFormPage({ form }: ClientFormPageProps) {
                       detail={details[question.id]}
                       onChange={handleChange}
                       onDetailChange={handleDetailChange}
+                      file={files[question.id]}
+                      onFileChange={handleFileChange}
                     />
                   </div>
                 ))}
               </div>
             </section>
           ))}
+
+          {draftRestored && !errorMessage && (
+            <p className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+              Brouillon retrouvé sur cet appareil. Les photos ne sont pas
+              conservées : ajoutez-les de nouveau si besoin.
+            </p>
+          )}
 
           {errorMessage && (
             <div
