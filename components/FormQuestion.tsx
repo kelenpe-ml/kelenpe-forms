@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  FileInput,
+  MultiChoiceInput,
+  NumberInput,
+  RatingInput,
+  ShortTextInput,
+} from "@/components/QuestionInputs";
+import type { UploadedFile } from "@/lib/submission";
 import type { FormAnswers, Question } from "@/lib/types";
 
 type FormQuestionProps = {
@@ -8,7 +16,17 @@ type FormQuestionProps = {
   detail: string | undefined;
   onChange: (id: string, value: string | string[]) => void;
   onDetailChange: (id: string, detail: string) => void;
+  file?: UploadedFile;
+  onFileChange?: (id: string, file: UploadedFile | undefined) => void;
 };
+
+function HostNote({ message }: { message: string }) {
+  return (
+    <p className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2.5 text-sm text-sky-900">
+      Note : {message}
+    </p>
+  );
+}
 
 function AlertBox({ message }: { message: string }) {
   return (
@@ -27,7 +45,10 @@ export function FormQuestion({
   detail,
   onChange,
   onDetailChange,
+  file,
+  onFileChange,
 }: FormQuestionProps) {
+  const text = typeof value === "string" ? value : "";
   const showDetailField =
     question.placeholder &&
     (question.id === "deadline" ||
@@ -36,8 +57,53 @@ export function FormQuestion({
   return (
     <fieldset className="space-y-3">
       <legend className="text-base font-medium leading-snug text-gray-900 sm:text-[1.05rem]">
+        {question.code && (
+          <span className="mr-2 font-semibold text-kelenpe">{question.code}.</span>
+        )}
         {question.label}
       </legend>
+
+      {question.type === "multi_choice" && (
+        <MultiChoiceInput
+          question={question}
+          value={Array.isArray(value) ? value : []}
+          detail={detail ?? ""}
+          onChange={(next) => onChange(question.id, next)}
+          onDetailChange={(next) => onDetailChange(question.id, next)}
+        />
+      )}
+
+      {question.type === "short_text" && (
+        <ShortTextInput
+          question={question}
+          value={text}
+          onChange={(next) => onChange(question.id, next)}
+        />
+      )}
+
+      {question.type === "number" && (
+        <NumberInput
+          question={question}
+          value={text}
+          onChange={(next) => onChange(question.id, next)}
+        />
+      )}
+
+      {question.type === "rating" && (
+        <RatingInput
+          questionLabel={question.label}
+          value={text}
+          onChange={(next) => onChange(question.id, next)}
+        />
+      )}
+
+      {question.type === "file" && onFileChange && (
+        <FileInput
+          question={question}
+          file={file}
+          onChange={(next) => onFileChange(question.id, next)}
+        />
+      )}
 
       {question.type === "single_choice" && question.options && (
         <div className="space-y-2">
@@ -93,6 +159,7 @@ export function FormQuestion({
         />
       )}
 
+      {question.hostNote && <HostNote message={question.hostNote} />}
       {question.alert && <AlertBox message={question.alert} />}
     </fieldset>
   );
@@ -164,7 +231,10 @@ export function buildInitialAnswers(form: {
 
   for (const section of form.sections) {
     for (const question of section.questions) {
-      answers[question.id] = question.type === "feature_priority" ? [] : "";
+      answers[question.id] =
+        question.type === "feature_priority" || question.type === "multi_choice"
+          ? []
+          : "";
     }
   }
 

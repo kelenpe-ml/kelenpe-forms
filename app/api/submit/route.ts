@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getClientForm } from "@/lib/clients";
+import { buildResponsesCsv } from "@/lib/csv";
 import { generateResponsesPdf } from "@/lib/pdf/ResponsesPdf";
-import type { FormAnswers } from "@/lib/types";
+import {
+  prepareAttachments,
+  sanitizeAnswers,
+  type UploadedFile,
+} from "@/lib/submission";
 
 type SubmitBody = {
   slug?: string;
-  answers?: FormAnswers;
+  answers?: Record<string, unknown>;
+  files?: Record<string, UploadedFile>;
 };
 
 export async function POST(request: Request) {
@@ -54,20 +60,40 @@ export async function POST(request: Request) {
       );
     }
 
-    const pdfBuffer = await generateResponsesPdf(form, body.answers);
-    const dateSlug = new Date().toISOString().slice(0, 10);
+    const questions = form.sections.flatMap((section) => section.questions);
+    const prepared = prepareAttachments(
+      body.files ?? {},
+      questions,
+      sanitizeAnswers(body.answers, questions),
+    );
+    if (prepared.error) {
+      return NextResponse.json({ error: prepared.error }, { status: 400 });
+    }
+
+    const submittedAt = new Date();
+    const pdfBuffer = await generateResponsesPdf(form, prepared.answers);
+    const csvBuffer = Buffer.from(
+      buildResponsesCsv(form, prepared.answers, submittedAt),
+      "utf-8",
+    );
+    const dateSlug = submittedAt.toISOString().slice(0, 10);
 
     const resend = new Resend(resendApiKey);
     const { data, error } = await resend.emails.send({
       from: "Kelenpe Forms <formulaires@resend.kelenpe.com>",
       to: inboxEmail,
       subject: `Nouvelles réponses — ${form.clientName}`,
-      text: `Nouvelles réponses reçues pour ${form.clientName} (${form.projectName}). Consultez la pièce jointe PDF.`,
+      text: `Nouvelles réponses reçues pour ${form.clientName} (${form.projectName}). Consultez les pièces jointes (PDF et CSV).`,
       attachments: [
         {
           filename: `reponses-${body.slug}-${dateSlug}.pdf`,
           content: pdfBuffer,
         },
+        {
+          filename: `reponses-${body.slug}-${dateSlug}.csv`,
+          content: csvBuffer,
+        },
+        ...prepared.attachments,
       ],
     });
 
