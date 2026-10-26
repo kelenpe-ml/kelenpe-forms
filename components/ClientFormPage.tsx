@@ -191,6 +191,26 @@ function ClientFormBody({
           <p className="text-lg font-medium text-gray-900">
             Merci, vos réponses ont bien été envoyées.
           </p>
+          {form.thankYou && (
+            <div className="mt-8 border-t border-gray-200 pt-6">
+              <p className="text-sm leading-relaxed text-gray-600">
+                {form.thankYou.text}
+              </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                {form.thankYou.links.map((link) => (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg border border-kelenpe px-4 py-2.5 text-sm font-medium text-kelenpe hover:bg-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-10 pb-24">

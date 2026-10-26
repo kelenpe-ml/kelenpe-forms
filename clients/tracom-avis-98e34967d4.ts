@@ -8,6 +8,13 @@ export const tracomAvis: ClientForm = {
   projectName: "Votre avis sur notre travail",
   intro:
     "Merci de nous avoir fait confiance pour votre logo et vos modèles de documents. Votre avis nous aide à nous améliorer : cela prend moins d'une minute.",
+  thankYou: {
+    text: "Pour découvrir ce que fait Kelenpe, regardez notre vidéo de présentation ou suivez-nous sur TikTok.",
+    links: [
+      { label: "Voir la vidéo de présentation", url: "https://vt.tiktok.com/ZSg4DWwWA/" },
+      { label: "Suivre @kelenpe_officiel", url: "https://www.tiktok.com/@kelenpe_officiel" },
+    ],
+  },
   sections: [
     {
       title: "Votre note",

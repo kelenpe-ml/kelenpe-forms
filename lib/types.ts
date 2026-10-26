@@ -41,6 +41,8 @@ export type ClientForm = {
   projectName: string;
   intro: string;
   sections: Section[];
+  /** Texte et liens affichés après l'envoi (facultatif). */
+  thankYou?: { text: string; links: { label: string; url: string }[] };
 };
 
 export type FormAnswers = Record<string, string | string[]>;
