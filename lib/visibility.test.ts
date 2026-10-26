@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { clearHiddenAnswers, isQuestionVisible } from "./visibility.ts";
+import { clearHiddenAnswers, findMissingRequired, isQuestionVisible } from "./visibility.ts";
 import { sanitizeAnswers } from "./submission.ts";
 import type { Question } from "./types.ts";
 
@@ -28,4 +28,11 @@ test("les réponses des questions masquées sont vidées", () => {
 test("le serveur ignore une réponse à une question masquée", () => {
   const out = sanitizeAnswers({ note: "2", bas: "lent", haut: "rien" }, [note, bas, haut]);
   assert.deepEqual(out, { note: "2", bas: "lent", haut: "" });
+});
+
+test("une note obligatoire vide est détectée, une note valide est acceptée", () => {
+  const required: Question = { ...note, required: true };
+  assert.equal(findMissingRequired([required], { note: "" })?.id, "note");
+  assert.equal(findMissingRequired([required], sanitizeAnswers({ note: "9" }, [required]))?.id, "note");
+  assert.equal(findMissingRequired([required], { note: "4" }), undefined);
 });

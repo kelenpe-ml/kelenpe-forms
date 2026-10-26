@@ -26,6 +26,8 @@ export type Question = {
   ratingStyle?: "numbers" | "stars";
   /** La question n'apparaît que si la note donnée à `questionId` est dans [min, max]. */
   showIf?: { questionId: string; min?: number; max?: number };
+  /** Réponse obligatoire : l'envoi est refusé tant qu'elle est vide. */
+  required?: boolean;
 };
 
 export type Section = {

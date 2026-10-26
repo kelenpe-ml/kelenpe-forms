@@ -7,7 +7,11 @@ import {
 } from "@/components/FormQuestion";
 import { KelenpeLogo } from "@/components/KelenpeLogo";
 import { mergeAnswersWithDetails } from "@/lib/formatAnswer";
-import { clearHiddenAnswers, isQuestionVisible } from "@/lib/visibility";
+import {
+  clearHiddenAnswers,
+  findMissingRequired,
+  isQuestionVisible,
+} from "@/lib/visibility";
 import type { UploadedFile } from "@/lib/submission";
 import type { ClientForm, FormAnswers } from "@/lib/types";
 
@@ -118,13 +122,19 @@ function ClientFormBody({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setSubmitState("loading");
     setErrorMessage(null);
 
     const mergedAnswers = clearHiddenAnswers(
       mergeAnswersWithDetails(answers, details, questions),
       questions,
     );
+
+    if (findMissingRequired(questions, mergedAnswers)) {
+      setSubmitState("error");
+      setErrorMessage("Merci de donner une note (de 1 à 5 étoiles) avant d'envoyer.");
+      return;
+    }
+    setSubmitState("loading");
 
     try {
       const response = await fetch("/api/submit", {

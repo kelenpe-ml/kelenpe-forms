@@ -22,3 +22,15 @@ export function clearHiddenAnswers(answers: FormAnswers, questions: Question[]):
   }
   return next;
 }
+
+/** Première question obligatoire visible dont la réponse est vide, ou undefined. */
+export function findMissingRequired(
+  questions: Question[],
+  answers: FormAnswers,
+): Question | undefined {
+  return questions.find((question) => {
+    if (!question.required || !isQuestionVisible(question, answers)) return false;
+    const value = answers[question.id];
+    return Array.isArray(value) ? value.length === 0 : !(typeof value === "string" && value.trim());
+  });
+}

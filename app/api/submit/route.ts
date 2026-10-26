@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { getClientForm } from "@/lib/clients";
 import { buildResponsesCsv } from "@/lib/csv";
 import { generateResponsesPdf } from "@/lib/pdf/ResponsesPdf";
+import { findMissingRequired } from "@/lib/visibility";
 import {
   prepareAttachments,
   sanitizeAnswers,
@@ -61,11 +62,14 @@ export async function POST(request: Request) {
     }
 
     const questions = form.sections.flatMap((section) => section.questions);
-    const prepared = prepareAttachments(
-      body.files ?? {},
-      questions,
-      sanitizeAnswers(body.answers, questions),
-    );
+    const cleanAnswers = sanitizeAnswers(body.answers, questions);
+    if (findMissingRequired(questions, cleanAnswers)) {
+      return NextResponse.json(
+        { error: "Une réponse obligatoire est manquante (la note)." },
+        { status: 400 },
+      );
+    }
+    const prepared = prepareAttachments(body.files ?? {}, questions, cleanAnswers);
     if (prepared.error) {
       return NextResponse.json({ error: prepared.error }, { status: 400 });
     }

@@ -61,6 +61,11 @@ export function FormQuestion({
           <span className="mr-2 font-semibold text-kelenpe">{question.code}.</span>
         )}
         {question.label}
+        {question.required && (
+          <span className="ml-1 text-red-600" aria-label="obligatoire">
+            *
+          </span>
+        )}
       </legend>
 
       {question.type === "multi_choice" && (

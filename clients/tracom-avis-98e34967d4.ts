@@ -16,6 +16,7 @@ export const tracomAvis: ClientForm = {
           id: "note_globale",
           type: "rating",
           ratingStyle: "stars",
+          required: true,
           label: "Dans l'ensemble, comment évaluez-vous le service de Kelenpe ?",
         },
         {
