@@ -102,7 +102,9 @@ export function NumberInput({
   );
 }
 
-export function RatingInput({
+const STAR_LABELS = ["Très déçu", "Déçu", "Correct", "Satisfait", "Très satisfait"];
+
+function StarRatingInput({
   questionLabel,
   value,
   onChange,
@@ -111,6 +113,50 @@ export function RatingInput({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const current = Number(value) || 0;
+  return (
+    <div>
+      <div role="radiogroup" aria-label={questionLabel} className="flex justify-center gap-1 sm:gap-2">
+        {RATING_VALUES.map((rating) => {
+          const filled = rating <= current;
+          return (
+            <button
+              key={rating}
+              type="button"
+              role="radio"
+              aria-checked={rating === current}
+              aria-label={`${rating} sur 5 – ${STAR_LABELS[rating - 1]}`}
+              onClick={() => onChange(rating === current ? "" : String(rating))}
+              className="flex h-14 w-14 items-center justify-center rounded-lg transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-kelenpe/40"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className={`h-10 w-10 ${filled ? "fill-amber-400 stroke-amber-500" : "fill-none stroke-gray-300"}`} strokeWidth={1.5} strokeLinejoin="round">
+                <path d="M12 2.8l2.84 5.76 6.36.92-4.6 4.48 1.09 6.33L12 17.3l-5.69 2.99 1.09-6.33-4.6-4.48 6.36-.92z" />
+              </svg>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-2 min-h-5 text-center text-sm text-gray-600" aria-live="polite">
+        {current ? STAR_LABELS[current - 1] : "Touchez une étoile pour noter"}
+      </p>
+    </div>
+  );
+}
+
+export function RatingInput({
+  questionLabel,
+  value,
+  onChange,
+  stars = false,
+}: {
+  questionLabel: string;
+  value: string;
+  onChange: (value: string) => void;
+  stars?: boolean;
+}) {
+  if (stars) {
+    return <StarRatingInput questionLabel={questionLabel} value={value} onChange={onChange} />;
+  }
   return (
     <div role="group" aria-label={questionLabel} className="grid grid-cols-5 gap-2">
       {RATING_VALUES.map((rating) => {

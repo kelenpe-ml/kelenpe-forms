@@ -1,4 +1,5 @@
 import type { FormAnswers, Question } from "./types.ts";
+import { clearHiddenAnswers } from "./visibility.ts";
 
 export const MAX_TEXT_LENGTH = 5000;
 export const MAX_CHOICES = 20;
@@ -59,7 +60,7 @@ export function sanitizeAnswers(
     if (question.type === "file") continue;
     clean[question.id] = cleanValue(question, answers[question.id]);
   }
-  return clean;
+  return clearHiddenAnswers(clean, questions);
 }
 
 function safeFileName(name: unknown): string {

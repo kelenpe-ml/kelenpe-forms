@@ -92,6 +92,7 @@ export function FormQuestion({
       {question.type === "rating" && (
         <RatingInput
           questionLabel={question.label}
+          stars={question.ratingStyle === "stars"}
           value={text}
           onChange={(next) => onChange(question.id, next)}
         />
