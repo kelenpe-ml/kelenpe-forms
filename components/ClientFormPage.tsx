@@ -241,7 +241,9 @@ function ClientFormBody({
             </section>
           ))}
 
-          {draftRestored && !errorMessage && (
+          {draftRestored &&
+            !errorMessage &&
+            questions.some((question) => question.type === "file") && (
             <p className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
               Brouillon retrouvé sur cet appareil. Les photos ne sont pas
               conservées : ajoutez-les de nouveau si besoin.
