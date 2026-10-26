@@ -7,6 +7,7 @@ import {
 } from "@/components/FormQuestion";
 import { KelenpeLogo } from "@/components/KelenpeLogo";
 import { mergeAnswersWithDetails } from "@/lib/formatAnswer";
+import { clearHiddenAnswers, isQuestionVisible } from "@/lib/visibility";
 import type { UploadedFile } from "@/lib/submission";
 import type { ClientForm, FormAnswers } from "@/lib/types";
 
@@ -120,7 +121,10 @@ function ClientFormBody({
     setSubmitState("loading");
     setErrorMessage(null);
 
-    const mergedAnswers = mergeAnswersWithDetails(answers, details, questions);
+    const mergedAnswers = clearHiddenAnswers(
+      mergeAnswersWithDetails(answers, details, questions),
+      questions,
+    );
 
     try {
       const response = await fetch("/api/submit", {
@@ -187,7 +191,7 @@ function ClientFormBody({
               </h2>
 
               <div className="space-y-8">
-                {section.questions.map((question) => (
+                {section.questions.filter((question) => isQuestionVisible(question, answers)).map((question) => (
                   <div
                     key={question.id}
                     className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 sm:p-5"
