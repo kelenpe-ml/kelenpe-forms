@@ -131,6 +131,16 @@ export function FormQuestion({
               </span>
             </label>
           ))}
+          {question.detailOption && value === question.detailOption && (
+            <input
+              type="text"
+              aria-label={`Précision : ${question.detailOption}`}
+              value={detail ?? ""}
+              onChange={(e) => onDetailChange(question.id, e.target.value)}
+              placeholder={question.detailPlaceholder}
+              className="w-full min-h-12 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-kelenpe focus:outline-none focus:ring-2 focus:ring-kelenpe/20"
+            />
+          )}
         </div>
       )}
 
