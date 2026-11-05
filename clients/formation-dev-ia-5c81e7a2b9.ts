@@ -18,6 +18,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "attentes",
           code: "1",
+          required: true,
           type: "multi_choice",
           label: "Qu'attendez-vous de la formation ? (plusieurs choix possibles)",
           options: [
@@ -33,6 +34,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "projet_personnel",
           code: "2",
+          required: true,
           type: "single_choice",
           label:
             "Avez-vous un projet personnel sur lequel vous aimeriez qu'on s'appuie pour les exercices ?",
@@ -41,8 +43,9 @@ export const formationDevIa: ClientForm = {
         {
           id: "projet_personnel_detail",
           type: "short_text",
+          required: true,
+          showIf: { questionId: "projet_personnel", equals: "Oui" },
           label: "Si oui, décrivez-le en une phrase",
-          placeholder: "Facultatif",
         },
       ],
     },
@@ -52,6 +55,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "domaine_c",
           code: "3",
+          required: true,
           type: "multi_choice",
           label: "Dans quel domaine utilisez-vous le C ? (plusieurs choix possibles)",
           options: [
@@ -67,6 +71,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "realisation_c",
           code: "4",
+          required: true,
           type: "text",
           label:
             "Qu'avez-vous déjà réalisé en C ? Un projet que vous pourriez me décrire ou me montrer.",
@@ -74,6 +79,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "outils",
           code: "5",
+          required: true,
           type: "multi_choice",
           label: "Quels outils avez-vous déjà utilisés ? (plusieurs choix possibles)",
           options: [
@@ -90,6 +96,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "outils_ia",
           code: "6",
+          required: true,
           type: "single_choice",
           label: "Utilisez-vous déjà des outils d'IA (ChatGPT, Claude, Copilot…) ?",
           options: ["Oui, pour coder", "Oui, mais pas pour coder", "Non, jamais"],
@@ -97,6 +104,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "documentation",
           code: "7",
+          required: true,
           type: "single_choice",
           label: "Êtes-vous à l'aise pour lire de la documentation ?",
           options: ["Oui", "Un peu", "Non"],
@@ -109,6 +117,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "approche",
           code: "8",
+          required: true,
           type: "single_choice",
           label:
             "Je vous propose une approche moderne : plutôt que d'apprendre chaque langage ligne par ligne, on s'appuie sur des outils d'IA qui génèrent le code (le « vibecoding »). Vous apprenez les concepts : architecture d'une application, front-end et back-end, bases de données, API, sécurité, déploiement. Votre expérience en C reste un vrai atout pour relire, comprendre et contrôler ce que l'IA produit. Quelle approche préférez-vous ?",
@@ -129,6 +138,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "systeme",
           code: "9",
+          required: true,
           type: "single_choice",
           label: "Quel système d'exploitation utilisez-vous ?",
           options: ["Windows", "macOS", "Linux", AUTRE],
@@ -138,6 +148,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "machine",
           code: "10",
+          required: true,
           type: "single_choice",
           label: "Quelle machine utilisez-vous ?",
           options: ["Ordinateur portable", "Ordinateur fixe"],
@@ -151,6 +162,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "rencontres",
           code: "11",
+          required: true,
           type: "single_choice",
           label:
             "La formation se fera en ligne. Nous pourrons aussi nous rencontrer lorsque nous serons dans la même ville, et vous pourrez vous déplacer si vous le souhaitez. Cela vous convient-il ?",
@@ -161,6 +173,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "jours",
           code: "12",
+          required: true,
           type: "multi_choice",
           label: "Quels jours vous conviennent ? (plusieurs choix possibles)",
           options: ["En semaine", "Le week-end"],
@@ -168,6 +181,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "moment",
           code: "13",
+          required: true,
           type: "multi_choice",
           label: "À quel moment de la journée ? (plusieurs choix possibles)",
           options: ["En journée", "En soirée"],
@@ -175,6 +189,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "heures_par_semaine",
           code: "14",
+          required: true,
           type: "single_choice",
           label:
             "Combien d'heures par semaine pouvez-vous y consacrer, travail personnel compris ?",
@@ -183,6 +198,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "duree",
           code: "15",
+          required: true,
           type: "single_choice",
           label: "Sur quelle durée envisagez-vous la formation ?",
           options: ["1 mois", "2 à 3 mois", "Plus de 3 mois", AUTRE],
@@ -192,6 +208,7 @@ export const formationDevIa: ClientForm = {
         {
           id: "date_debut",
           code: "16",
+          required: true,
           type: "date",
           label: "À partir de quelle date souhaitez-vous commencer ?",
         },

@@ -5,6 +5,7 @@ export function isQuestionVisible(question: Question, answers: FormAnswers): boo
   const rule = question.showIf;
   if (!rule) return true;
   const value = answers[rule.questionId];
+  if (rule.equals !== undefined) return value === rule.equals;
   const rating = Number(typeof value === "string" ? value : "");
   if (!Number.isInteger(rating) || rating < 1) return false;
   if (rule.min !== undefined && rating < rule.min) return false;

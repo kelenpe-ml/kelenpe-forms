@@ -36,3 +36,23 @@ test("une note obligatoire vide est détectée, une note valide est acceptée", 
   assert.equal(findMissingRequired([required], sanitizeAnswers({ note: "9" }, [required]))?.id, "note");
   assert.equal(findMissingRequired([required], { note: "4" }), undefined);
 });
+
+test("une question avec `equals` n'apparaît que pour la réponse choisie", () => {
+  const projet: Question = { id: "projet", type: "single_choice", label: "Projet" };
+  const detail: Question = {
+    id: "detail",
+    type: "short_text",
+    label: "Détail",
+    required: true,
+    showIf: { questionId: "projet", equals: "Oui" },
+  };
+  assert.equal(isQuestionVisible(detail, { projet: "" }), false);
+  assert.equal(isQuestionVisible(detail, { projet: "Non" }), false);
+  assert.equal(isQuestionVisible(detail, { projet: "Oui" }), true);
+  assert.equal(findMissingRequired([projet, detail], { projet: "Non", detail: "" }), undefined);
+  assert.equal(findMissingRequired([projet, detail], { projet: "Oui", detail: "" }), detail);
+  assert.deepEqual(clearHiddenAnswers({ projet: "Non", detail: "x" }, [projet, detail]), {
+    projet: "Non",
+    detail: "",
+  });
+});

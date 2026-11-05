@@ -25,8 +25,11 @@ export type Question = {
   detailPlaceholder?: string;
   /** Affichage de la note (type « rating ») : chiffres (défaut) ou étoiles. */
   ratingStyle?: "numbers" | "stars";
-  /** La question n'apparaît que si la note donnée à `questionId` est dans [min, max]. */
-  showIf?: { questionId: string; min?: number; max?: number };
+  /**
+   * La question n'apparaît que si la réponse à `questionId` correspond :
+   * `equals` (choix unique) ou note dans [min, max].
+   */
+  showIf?: { questionId: string; min?: number; max?: number; equals?: string };
   /** Réponse obligatoire : l'envoi est refusé tant qu'elle est vide. */
   required?: boolean;
 };
