@@ -4,6 +4,7 @@ export type QuestionType =
   | "text"
   | "short_text"
   | "number"
+  | "date"
   | "rating"
   | "file"
   | "feature_priority";

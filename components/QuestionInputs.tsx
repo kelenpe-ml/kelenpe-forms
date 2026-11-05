@@ -102,7 +102,27 @@ export function NumberInput({
   );
 }
 
-const STAR_LABELS = ["Très déçu", "Déçu", "Correct", "Satisfait", "Très satisfait"];
+export function DateInput({
+  question,
+  value,
+  onChange,
+}: {
+  question: Question;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <input
+      id={question.id}
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={FIELD_CLASS}
+    />
+  );
+}
+
+const STAR_LABELS =["Très déçu", "Déçu", "Correct", "Satisfait", "Très satisfait"];
 
 function StarRatingInput({
   questionLabel,

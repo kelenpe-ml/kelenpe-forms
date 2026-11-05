@@ -192,9 +192,8 @@ export const formationDevIa: ClientForm = {
         {
           id: "date_debut",
           code: "16",
-          type: "short_text",
+          type: "date",
           label: "À partir de quelle date souhaitez-vous commencer ?",
-          placeholder: "JJ / MM / AAAA",
         },
       ],
     },

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  DateInput,
   FileInput,
   MultiChoiceInput,
   NumberInput,
@@ -80,6 +81,14 @@ export function FormQuestion({
 
       {question.type === "short_text" && (
         <ShortTextInput
+          question={question}
+          value={text}
+          onChange={(next) => onChange(question.id, next)}
+        />
+      )}
+
+      {question.type === "date" && (
+        <DateInput
           question={question}
           value={text}
           onChange={(next) => onChange(question.id, next)}
