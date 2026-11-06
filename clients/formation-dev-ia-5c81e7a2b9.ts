@@ -165,9 +165,9 @@ export const formationDevIa: ClientForm = {
           required: true,
           type: "single_choice",
           label:
-            "La formation se fera en ligne. Nous pourrons aussi nous rencontrer lorsque nous serons dans la même ville, et vous pourrez vous déplacer si vous le souhaitez. Cela vous convient-il ?",
-          options: ["Oui", "Non, je préfère"],
-          detailOption: "Non, je préfère",
+            "La formation se fait en ligne. On ne se voit en personne que si c'est vraiment nécessaire. Ça vous va ?",
+          options: ["Oui", "Non, j'ai une autre idée"],
+          detailOption: "Non, j'ai une autre idée",
           detailPlaceholder: "Précisez votre préférence…",
         },
         {
@@ -176,7 +176,7 @@ export const formationDevIa: ClientForm = {
           required: true,
           type: "multi_choice",
           label: "Quels jours vous conviennent ? (plusieurs choix possibles)",
-          options: ["En semaine", "Le week-end"],
+          options: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
         },
         {
           id: "moment",
